@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instagram Post Scraper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- ══ HEADER ══ -->
+    <div class="header">
+      <div class="header-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="igGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#fcb045"/>
+              <stop offset="40%" stop-color="#fd1d1d"/>
+              <stop offset="100%" stop-color="#833ab4"/>
+            </linearGradient>
+          </defs>
+          <rect x="2" y="2" width="20" height="20" rx="6" stroke="url(#igGrad)" stroke-width="2"/>
+          <circle cx="12" cy="12" r="4" stroke="url(#igGrad)" stroke-width="2"/>
+          <circle cx="17.5" cy="6.5" r="1" fill="url(#igGrad)"/>
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1>Instagram Scraper</h1>
+        <p>Coleta automática de posts</p>
+      </div>
+    </div>
+
+    <!-- ══ STATUS BADGE ══ -->
+    <div class="status-bar" id="statusBar">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusText">Abra um perfil do Instagram para começar</span>
+    </div>
+
+    <!-- ══ SECTION: CONFIG ══ -->
+    <div class="section" id="configSection">
+      <div class="section-label">Intervalo de posts</div>
+
+      <div class="range-row">
+        <div class="input-group">
+          <label for="fromPost">De</label>
+          <input type="number" id="fromPost" value="1" min="1" max="9999" />
+        </div>
+        <div class="range-arrow">→</div>
+        <div class="input-group">
+          <label for="toPost">Até</label>
+          <input type="number" id="toPost" value="10" min="1" max="9999" />
+        </div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-header">
+          <label for="delaySlider">Intervalo entre posts</label>
+          <span class="slider-value" id="delayValue">1500 ms</span>
+        </div>
+        <input type="range" id="delaySlider" min="500" max="5000" value="1500" step="100" />
+        <div class="slider-labels">
+          <span>Rápido (500ms)</span>
+          <span>Lento (5s)</span>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="startBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        Iniciar Coleta
+      </button>
+    </div>
+
+    <!-- ══ SECTION: PROGRESS ══ -->
+    <div class="section hidden" id="progressSection">
+
+      <div class="progress-header">
+        <span id="progressLabel">Preparando...</span>
+        <span class="progress-pct" id="progressPct">0%</span>
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <div class="progress-stats">
+        <div class="stat-pill" id="statCollected">
+          <span class="stat-num" id="numCollected">0</span>
+          <span class="stat-lbl">coletados</span>
+        </div>
+        <div class="stat-pill" id="statRemaining">
+          <span class="stat-num" id="numRemaining">0</span>
+          <span class="stat-lbl">restantes</span>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <button class="btn-pause" id="pauseBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          Pausar
+        </button>
+        <button class="btn-stop" id="stopBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h12v12H6z"/></svg>
+          Parar
+        </button>
+      </div>
+    </div>
+
+    <!-- ══ SECTION: RESULTS ══ -->
+    <div class="section hidden" id="resultsSection">
+
+      <div class="results-header">
+        <div>
+          <span class="results-count" id="resultsCount">0</span>
+          <span class="results-title">posts coletados</span>
+        </div>
+        <div class="export-group">
+          <button class="btn-icon" id="copyBtn" title="Copiar JSON">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+          </button>
+          <button class="btn-export" id="csvBtn">CSV</button>
+          <button class="btn-export" id="jsonBtn">JSON</button>
+          <button class="btn-export btn-export-xlsx" id="xlsxBtn">XLSX</button>
+        </div>
+      </div>
+
+      <div class="message-pill" id="messagePill"></div>
+
+      <div class="posts-list" id="postsList"></div>
+
+      <button class="btn-secondary" id="newScrapeBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 11H7.83l4.88-4.88c.39-.39.39-1.03 0-1.42-.39-.39-1.02-.39-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L7.83 13H19c.55 0 1-.45 1-1s-.45-1-1-1z"/></svg>
+        Nova coleta
+      </button>
+    </div>
+
+  </div><!-- /.app -->
+
+  <script src="libs/xlsx.min.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
