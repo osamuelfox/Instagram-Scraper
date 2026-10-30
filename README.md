@@ -154,7 +154,3 @@ Este projeto automatiza a navegação em uma conta real do Instagram. Use por su
 - Retomada de coleta interrompida a partir do último post.
 - Suporte a outras línguas na interface.
 - Publicação na Chrome Web Store.
-
-## Licença
-
-Defina aqui a licença do projeto (por exemplo, MIT).
